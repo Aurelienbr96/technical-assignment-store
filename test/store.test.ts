@@ -1,8 +1,10 @@
 import { JSONObject } from "../src/json-types";
-import { Permission, Restrict, Store } from "../src/store";
+import { Store } from "../src/store";
 import { UserStore } from "../src/userStore";
 import { AdminStore } from "./../src/adminStore";
 import { lazy } from "../src/lazy";
+import { Restrict } from "../src/decorators";
+import { Permission } from "../src/types";
 
 /*
 
@@ -14,9 +16,11 @@ These tests check the fundamental operations for user and admin stores.
 
 describe("UserStore class - Basic Operations", () => {
   let userStore: UserStore;
+  let store: Store;
 
   beforeEach(() => {
     userStore = new UserStore();
+    store = new Store();
   });
 
   it("should allow reading allowed keys", () => {
@@ -25,6 +29,7 @@ describe("UserStore class - Basic Operations", () => {
 
   it("should allow writing allowed keys", () => {
     userStore.write("name", "Jhone Known");
+
     expect(userStore.read("name")).toBe("Jhone Known");
   });
 
@@ -323,11 +328,9 @@ describe("Test Store - Permission Inheritance", () => {
       @Restrict("r")
       public parentProp = lazy(() => new ChildStore());
     }
-    class ChildStore extends ParentStore { }
+    class ChildStore extends ParentStore {}
     const baseChildStore = new ChildStore();
-    const nestedChildStore = baseChildStore.read(
-      "parentProp:parentProp:parentProp"
-    ) as Store;
+    const nestedChildStore = baseChildStore.read("parentProp:parentProp:parentProp") as Store;
     expect(nestedChildStore).toBeInstanceOf(ChildStore);
     expect(baseChildStore.allowedToWrite("parentProp")).toBe(false);
     expect(nestedChildStore.allowedToWrite("parentProp")).toBe(false);

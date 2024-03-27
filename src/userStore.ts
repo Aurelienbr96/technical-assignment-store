@@ -1,4 +1,5 @@
-import { Restrict, Store } from "./store";
+import { Restrict } from "./decorators";
+import { Store } from "./store";
 
 export class UserStore extends Store {
   @Restrict("rw")
